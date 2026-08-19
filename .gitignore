@@ -1,0 +1,5 @@
+# Dependencies — never commit these; npm install re-creates them
+node_modules/
+
+# Environment variables — contains real secrets, must NEVER go to GitHub
+.env
