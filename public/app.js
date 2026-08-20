@@ -117,7 +117,9 @@ async function sendWebhook(scenario) {
 
   } catch (err) {
     showState('error');
-    document.getElementById('sending-state').textContent = '⚠ ' + err.message;
+    const sendingEl = document.getElementById('sending-state');
+    sendingEl.style.color = 'var(--amber)';
+    sendingEl.textContent = '⚠ ' + err.message;
   } finally {
     setFormDisabled(false);
   }
@@ -134,9 +136,16 @@ function showState(state) {
 }
 
 function handleTriggerResponse(data) {
-  const accepted = data.status === 200;
+  const accepted  = data.status === 200;
+  const statusCard = document.getElementById('status-card');
+  const detailCard = document.getElementById('result-detail-card');
+  const sendingEl  = document.getElementById('sending-state');
 
-  /* ── Main status card ── */
+  /* ── Colour the status card border + background ── */
+  statusCard.classList.remove('card-verified', 'card-rejected');
+  statusCard.classList.add(accepted ? 'card-verified' : 'card-rejected');
+
+  /* ── Show result state ── */
   showState('result');
 
   const iconEl    = document.getElementById('result-icon');
@@ -152,6 +161,8 @@ function handleTriggerResponse(data) {
     linesEl.innerHTML       = 'Signature matched<br>Webhook accepted';
     httpEl.textContent      = 'HTTP STATUS: 200';
     httpEl.className        = 'result-http http-200';
+    sendingEl.style.color   = 'var(--green)';
+    sendingEl.textContent   = '✓ Webhook accepted — HTTP 200';
   } else {
     iconEl.textContent      = '✕';
     iconEl.style.color      = 'var(--red)';
@@ -164,9 +175,15 @@ function handleTriggerResponse(data) {
     } else {
       linesEl.innerHTML = 'Signature verification failed<br>Webhook rejected';
     }
-    httpEl.textContent  = `HTTP STATUS: ${data.status}`;
-    httpEl.className    = 'result-http http-4xx';
+    httpEl.textContent      = `HTTP STATUS: ${data.status}`;
+    httpEl.className        = 'result-http http-4xx';
+    sendingEl.style.color   = 'var(--red)';
+    sendingEl.textContent   = `✕ Webhook rejected — HTTP ${data.status}`;
   }
+
+  /* ── Colour the detail card top border ── */
+  detailCard.classList.remove('card-verified', 'card-rejected');
+  detailCard.classList.add(accepted ? 'card-verified' : 'card-rejected');
 
   /* ── Detail table ── */
   renderDetailTable(data, accepted);

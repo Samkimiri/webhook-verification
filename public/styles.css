@@ -301,21 +301,24 @@ code {
   color: #000;
   border-color: var(--green);
 }
-.btn-valid:not(:disabled):hover { opacity: .88; }
+.btn-valid:not(:disabled):hover { background: #4dcc5e; border-color: #4dcc5e; }
 
+/* Invalid button: solid red fill — visually equally prominent as valid */
 .btn-invalid {
-  background: transparent;
-  color: var(--red);
+  background: var(--red);
+  color: #fff;
   border-color: var(--red);
 }
-.btn-invalid:not(:disabled):hover { background: var(--red-dim); }
+.btn-invalid:not(:disabled):hover { background: #ff6b63; border-color: #ff6b63; }
 
 .sending-state {
   margin-top: 12px;
   min-height: 18px;
   font-size: 12px;
+  font-weight: 600;
+  /* colour set by JS: green for success, red for failure */
   color: var(--text-muted);
-  font-weight: 500;
+  transition: color .2s;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -397,14 +400,33 @@ code {
 /* ════════════════════════════════════════════════════════════
    STATUS CARD
    ════════════════════════════════════════════════════════════ */
-.status-card { flex-shrink: 0; }
+.status-card { flex-shrink: 0; transition: border-color .25s; }
+
+/* Colour the card border + body background when a result arrives */
+.status-card.card-verified {
+  border-color: var(--green);
+}
+.status-card.card-verified .card-header {
+  background: var(--green-mid);
+  border-bottom-color: var(--green);
+}
+.status-card.card-rejected {
+  border-color: var(--red);
+}
+.status-card.card-rejected .card-header {
+  background: var(--red-mid);
+  border-bottom-color: var(--red);
+}
 
 .status-body {
   min-height: 220px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background .25s;
 }
+.status-card.card-verified .status-body { background: var(--green-dim); }
+.status-card.card-rejected .status-body { background: var(--red-dim);   }
 
 /* idle */
 .status-idle { text-align: center; }
@@ -444,7 +466,7 @@ code {
 
 .result-lines {
   font-size: 13px;
-  color: var(--text-muted);
+  color: var(--text);       /* bright text — readable on tinted background */
   line-height: 1.8;
   margin-bottom: 14px;
 }
@@ -477,6 +499,10 @@ code {
 /* ════════════════════════════════════════════════════════════
    RESULT DETAIL TABLE
    ════════════════════════════════════════════════════════════ */
+/* Coloured top border on the detail card matching the last result */
+#result-detail-card.card-verified { border-top: 3px solid var(--green); }
+#result-detail-card.card-rejected { border-top: 3px solid var(--red);   }
+
 .result-table { width: 100%; border-collapse: collapse; }
 .result-table tr { border-bottom: 1px solid var(--border-sub); }
 .result-table tr:last-child { border-bottom: none; }
@@ -549,14 +575,28 @@ code {
   vertical-align: middle;
 }
 .events-table tr:last-child td { border-bottom: none; }
-.events-table tr.ev-row-ok   td:first-child { border-left: 2px solid var(--green); }
-.events-table tr.ev-row-fail td:first-child { border-left: 2px solid var(--red); }
 
-.ev-time { font-family: "Cascadia Code","Fira Mono","Consolas",monospace; color: var(--text-muted); font-size: 12px; }
+/* Valid rows: green left stripe + subtle green background tint */
+.events-table tr.ev-row-ok td {
+  background: rgba(63,185,80,.07);
+}
+.events-table tr.ev-row-ok td:first-child {
+  border-left: 3px solid var(--green);
+}
+
+/* Invalid rows: red left stripe + subtle red background tint */
+.events-table tr.ev-row-fail td {
+  background: rgba(248,81,73,.07);
+}
+.events-table tr.ev-row-fail td:first-child {
+  border-left: 3px solid var(--red);
+}
+
+.ev-time    { font-family: "Cascadia Code","Fira Mono","Consolas",monospace; color: var(--text-muted); font-size: 12px; }
 .ev-product { font-weight: 600; }
 .ev-event   { color: var(--text-muted); font-size: 12px; }
-.ev-status-ok   { color: var(--green); font-weight: 700; }
-.ev-status-fail { color: var(--red);   font-weight: 700; }
+.ev-status-ok   { color: var(--green); font-weight: 700; font-size: 13px; }
+.ev-status-fail { color: var(--red);   font-weight: 700; font-size: 13px; }
 .ev-http-ok   { color: var(--green); font-family: "Cascadia Code","Fira Mono","Consolas",monospace; font-weight: 700; }
 .ev-http-fail { color: var(--red);   font-family: "Cascadia Code","Fira Mono","Consolas",monospace; font-weight: 700; }
 
