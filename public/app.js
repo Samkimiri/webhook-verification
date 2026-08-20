@@ -75,17 +75,51 @@ connectSSE();
 /* ══════════════════════════════════════════════════════════
    3. FORM SUBMISSION
    ══════════════════════════════════════════════════════════ */
+
+/* Read form values — never silently substitute a value that
+   would mismatch what the user sees in the field.
+   quantity uses ?? (nullish) not || so that 0 is preserved. */
 function getFormValues() {
+  const qtyRaw = document.getElementById('f-qty').value.trim();
   return {
-    event:        document.getElementById('f-event').value.trim() || 'inventory.updated',
+    event:        'inventory.updated',                                        // fixed — not user-editable
     product_id:   document.getElementById('f-pid').value.trim()   || 'SKU-001',
     product_name: document.getElementById('f-pname').value.trim() || 'Laptop',
-    quantity:     Number(document.getElementById('f-qty').value)  || 25,
+    quantity:     qtyRaw === '' ? 25 : Number(qtyRaw),
   };
 }
 
+/* Validate and show an inline error if something is wrong.
+   Returns true if OK to proceed. */
+function validateForm() {
+  const pid   = document.getElementById('f-pid').value.trim();
+  const pname = document.getElementById('f-pname').value.trim();
+  const qty   = document.getElementById('f-qty').value.trim();
+  const sendingEl = document.getElementById('sending-state');
+
+  if (!pid) {
+    sendingEl.style.color = 'var(--amber)';
+    sendingEl.textContent = '⚠ Product ID cannot be empty.';
+    document.getElementById('f-pid').focus();
+    return false;
+  }
+  if (!pname) {
+    sendingEl.style.color = 'var(--amber)';
+    sendingEl.textContent = '⚠ Product Name cannot be empty.';
+    document.getElementById('f-pname').focus();
+    return false;
+  }
+  if (qty !== '' && (isNaN(Number(qty)) || Number(qty) < 0)) {
+    sendingEl.style.color = 'var(--amber)';
+    sendingEl.textContent = '⚠ Quantity must be a positive number.';
+    document.getElementById('f-qty').focus();
+    return false;
+  }
+  return true;
+}
+
 function setFormDisabled(disabled) {
-  ['f-event','f-pid','f-pname','f-qty','btn-valid','btn-invalid']
+  ['f-pid','f-pname','f-qty','btn-valid','btn-invalid']
     .forEach(id => {
       const el = document.getElementById(id);
       if (el) el.disabled = disabled;
@@ -93,10 +127,20 @@ function setFormDisabled(disabled) {
 }
 
 async function sendWebhook(scenario) {
+  const sendingEl = document.getElementById('sending-state');
+
+  /* Clear previous result colour */
+  sendingEl.style.color = 'var(--text-muted)';
+  sendingEl.textContent = '';
+
+  /* Validate before sending */
+  if (!validateForm()) return;
+
   /* Show loading state */
   setFormDisabled(true);
   showState('loading');
-  document.getElementById('sending-state').textContent = 'Verifying webhook…';
+  sendingEl.style.color = 'var(--text-muted)';
+  sendingEl.textContent = 'Verifying webhook…';
 
   const body = { scenario, ...getFormValues() };
 
@@ -112,12 +156,11 @@ async function sendWebhook(scenario) {
     }
 
     const data = await r.json();
+    /* handleTriggerResponse sets sendingEl text — do NOT clear it here */
     handleTriggerResponse(data);
-    document.getElementById('sending-state').textContent = '';
 
   } catch (err) {
     showState('error');
-    const sendingEl = document.getElementById('sending-state');
     sendingEl.style.color = 'var(--amber)';
     sendingEl.textContent = '⚠ ' + err.message;
   } finally {

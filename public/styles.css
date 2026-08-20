@@ -236,12 +236,21 @@ code {
   padding: 13px 18px;
   border-bottom: 1px solid var(--border-sub);
   background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .card-label {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: .1em;
   color: var(--text-muted);
+}
+/* Instructional hint next to card title */
+.card-hint {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-style: italic;
 }
 .card-body { padding: 20px; }
 
@@ -250,13 +259,23 @@ code {
    ════════════════════════════════════════════════════════════ */
 .form-group { margin-bottom: 14px; }
 .form-label {
-  display: block;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: .06em;
   color: var(--text-muted);
   margin-bottom: 5px;
   text-transform: uppercase;
+}
+/* Small greyed hint beside each label */
+.field-hint {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--text-dim);
+  text-transform: none;
+  letter-spacing: 0;
 }
 .form-input {
   width: 100%;
@@ -279,7 +298,33 @@ code {
   cursor: not-allowed;
 }
 
-.btn-row { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+/* Fixed info strip showing the locked event + endpoint */
+.form-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 16px 0 4px;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-sub);
+  border-radius: var(--r-sm);
+}
+.form-info-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+.form-info-key {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  min-width: 60px;
+}
+
+.btn-row { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
 
 .btn {
   width: 100%;
