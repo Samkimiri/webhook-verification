@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Webhook Guard — Assignment 1 · The Meridian Pivot</title>
+  <title>Webhook Guard · Northstar Retail</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -27,7 +27,7 @@
   <!-- ── HERO ── -->
   <section class="hero" aria-label="What this app does">
     <div class="hero-inner">
-      <div class="hero-eyebrow">Assignment 1 · The Meridian Pivot</div>
+      <div class="hero-eyebrow">Northstar Retail Co. · Inventory System</div>
       <h1 class="hero-title">Is this message really from our warehouse?</h1>
       <p class="hero-subtitle">
         When our warehouse system sends an inventory update, we need to be sure it's genuine —
@@ -298,6 +298,67 @@
                 <div class="sec-node sec-node-ok">Inventory Updated ✓</div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEND A REAL WEBHOOK -->
+      <section class="card" id="real-webhook-card" aria-label="Send a real webhook from an external tool">
+        <div class="card-header">
+          <div class="card-header-icon" aria-hidden="true">🔗</div>
+          <div>
+            <div class="card-title">Send a Real Webhook</div>
+            <div class="card-subtitle">Use Postman, curl, or any HTTP tool — the live details are below</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="rw-intro">
+            The form above is a simulator — it signs messages internally. To send a genuinely external webhook, you need
+            the <strong>endpoint</strong>, the <strong>secret key</strong>, and the correct <strong>signature header</strong>.
+            Everything you need is here.
+          </p>
+
+          <div class="rw-table">
+            <div class="rw-row">
+              <span class="rw-label">Endpoint</span>
+              <span class="rw-val" id="rw-endpoint"><span class="rw-loading">Loading…</span></span>
+              <button class="rw-copy" onclick="copyRW('rw-endpoint')" title="Copy">Copy</button>
+            </div>
+            <div class="rw-row">
+              <span class="rw-label">Method</span>
+              <span class="rw-val rw-code">POST</span>
+            </div>
+            <div class="rw-row">
+              <span class="rw-label">Signature Header</span>
+              <span class="rw-val rw-code">X-Webhook-Signature</span>
+              <button class="rw-copy" onclick="copyText('X-Webhook-Signature')" title="Copy">Copy</button>
+            </div>
+            <div class="rw-row">
+              <span class="rw-label">Secret Key</span>
+              <span class="rw-val rw-secret" id="rw-secret"><span class="rw-loading">Loading…</span></span>
+              <button class="rw-copy" onclick="copyRW('rw-secret')" title="Copy">Copy</button>
+            </div>
+            <div class="rw-row">
+              <span class="rw-label">Signing Algorithm</span>
+              <span class="rw-val rw-code">HMAC-SHA256 → hex string</span>
+            </div>
+          </div>
+
+          <div class="rw-body-block">
+            <div class="rw-body-label">Example message body (JSON)</div>
+            <div class="rw-body-code" id="rw-sample-body"><span class="rw-loading">Loading…</span></div>
+            <button class="rw-copy rw-copy-block" onclick="copyRW('rw-sample-body')" title="Copy body">Copy body</button>
+          </div>
+
+          <div class="rw-curl-block">
+            <div class="rw-body-label">curl command — ready to paste into a terminal</div>
+            <div class="rw-body-code rw-curl-code" id="rw-curl"><span class="rw-loading">Loading…</span></div>
+            <button class="rw-copy rw-copy-block" onclick="copyRW('rw-curl')" title="Copy curl">Copy curl</button>
+          </div>
+
+          <div class="rw-note">
+            💡 The signature is a HMAC-SHA256 hash of the exact JSON body, using the secret key above.
+            Any change to the body — even a space — will produce a different signature and the webhook will be rejected.
           </div>
         </div>
       </section>

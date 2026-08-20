@@ -139,6 +139,25 @@ app.get('/api/status', (_req, res) => {
   res.json({ status: 'ok', service: 'webhook-guard', timestamp: new Date().toISOString() });
 });
 
+// ─── Route: GET /api/webhook-info — real webhook details for external senders ─
+// Returns the live endpoint URL and the shared secret so users can send real
+// signed webhooks from Postman, curl, or any HTTP tool.
+// This is intentional for a local prototype — in production, the secret would
+// never be returned by an API.
+app.get('/api/webhook-info', (req, res) => {
+  const proto  = req.headers['x-forwarded-proto'] || 'http';
+  const host   = req.headers.host || `localhost:${PORT}`;
+  const endpoint = `${proto}://${host}/webhook/inventory`;
+  res.json({
+    endpoint,
+    secret: WEBHOOK_SECRET,
+    method: 'POST',
+    header: 'X-Webhook-Signature',
+    algorithm: 'HMAC-SHA256 (hex)',
+    sampleBody: JSON.stringify({ event: 'inventory.updated', product_id: 'SKU-001', product_name: 'Laptop', quantity: 25 }),
+  });
+});
+
 // ─── Route: GET /api/events — Server-Sent Events stream ──────────────────────
 // The browser connects once and the server pushes new webhook events in real
 // time without the page needing to poll. SSE is a plain HTTP response that

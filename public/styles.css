@@ -864,6 +864,132 @@ body {
 .journal-btn:focus-visible { box-shadow: 0 0 0 3px rgba(9,105,218,.3); outline: none; }
 
 /* ════════════════════════════════════════════════════════════
+   REAL WEBHOOK INFO CARD
+   ════════════════════════════════════════════════════════════ */
+.rw-intro {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin-bottom: 18px;
+}
+.rw-intro strong { color: var(--text); font-weight: 600; }
+
+.rw-table {
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.rw-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-sub);
+  flex-wrap: wrap;
+}
+.rw-row:last-child { border-bottom: none; }
+
+.rw-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  min-width: 130px;
+  flex-shrink: 0;
+}
+
+.rw-val {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text);
+  word-break: break-all;
+}
+
+.rw-code {
+  font-family: "Cascadia Code","Fira Mono","Consolas",monospace;
+  font-size: 12px;
+  background: var(--surface-2);
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid var(--border-sub);
+  color: var(--blue);
+}
+
+.rw-secret {
+  font-family: "Cascadia Code","Fira Mono","Consolas",monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--red);
+  background: var(--red-light);
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--red-border);
+}
+
+.rw-loading { color: var(--text-dim); font-style: italic; font-size: 12px; }
+
+.rw-copy {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 3px 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color .1s, color .1s;
+}
+.rw-copy:hover { border-color: var(--blue); color: var(--blue); }
+
+.rw-body-block, .rw-curl-block {
+  margin-bottom: 16px;
+}
+
+.rw-body-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.rw-body-code {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 12px 14px;
+  font-family: "Cascadia Code","Fira Mono","Consolas",monospace;
+  font-size: 12px;
+  color: var(--text);
+  white-space: pre;
+  overflow-x: auto;
+  margin-bottom: 6px;
+}
+
+.rw-curl-code { color: var(--purple); }
+
+.rw-copy-block {
+  display: inline-block;
+  padding: 4px 12px;
+}
+
+.rw-note {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--amber-light);
+  border: 1px solid #e6c84a;
+  border-radius: var(--r-sm);
+  padding: 10px 14px;
+  line-height: 1.55;
+}
+
+/* ════════════════════════════════════════════════════════════
    FOOTER
    ════════════════════════════════════════════════════════════ */
 .site-footer {

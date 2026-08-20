@@ -9,6 +9,7 @@
      4. Render verification status card (idle / loading / result / error)
      5. Render verification result detail table
      6. Maintain and render the recent events table
+     7. Load /api/webhook-info and populate the "Send a Real Webhook" card
    ════════════════════════════════════════════════════════════ */
 
 'use strict';
@@ -179,9 +180,10 @@ function showState(state) {
 }
 
 function handleTriggerResponse(data) {
-  const accepted  = data.status === 200;
+  const accepted   = data.status === 200;
   const statusCard = document.getElementById('status-card');
   const detailCard = document.getElementById('result-detail-card');
+  const detailHint = document.getElementById('detail-hint');
   const sendingEl  = document.getElementById('sending-state');
 
   /* ── Colour the status card border + background ── */
@@ -202,10 +204,11 @@ function handleTriggerResponse(data) {
     verdictEl.textContent   = 'VERIFIED';
     verdictEl.className     = 'result-verdict verified';
     linesEl.innerHTML       = 'Signature matched<br>Webhook accepted';
-    httpEl.textContent      = 'HTTP STATUS: 200';
+    httpEl.textContent      = 'HTTP 200';
     httpEl.className        = 'result-http http-200';
     sendingEl.style.color   = 'var(--green)';
     sendingEl.textContent   = '✓ Webhook accepted — HTTP 200';
+    if (detailHint) detailHint.textContent = 'Event passed verification';
   } else {
     iconEl.textContent      = '✕';
     iconEl.style.color      = 'var(--red)';
@@ -218,10 +221,11 @@ function handleTriggerResponse(data) {
     } else {
       linesEl.innerHTML = 'Signature verification failed<br>Webhook rejected';
     }
-    httpEl.textContent      = `HTTP STATUS: ${data.status}`;
+    httpEl.textContent      = `HTTP ${data.status}`;
     httpEl.className        = 'result-http http-4xx';
     sendingEl.style.color   = 'var(--red)';
     sendingEl.textContent   = `✕ Webhook rejected — HTTP ${data.status}`;
+    if (detailHint) detailHint.textContent = 'Event was not processed';
   }
 
   /* ── Colour the detail card top border ── */
@@ -287,14 +291,15 @@ function rebuildEventsTable() {
     const time      = new Date(ev.ts).toLocaleTimeString();
     const product   = ev.body?.product_id   || '—';
     const eventType = ev.body?.event        || '—';
-    const status    = accepted ? '✓ Verified'  : '✕ Rejected';
+    const status    = accepted ? '✓ Verified' : '✕ Rejected';
     const statusCls = accepted ? 'ev-status-ok' : 'ev-status-fail';
     const httpCls   = accepted ? 'ev-http-ok'   : 'ev-http-fail';
 
+    /* column order: TIME · EVENT · PRODUCT · STATUS · HTTP */
     return `<tr class="${rowClass}">
       <td class="ev-time">${time}</td>
-      <td class="ev-product">${esc(product)}</td>
       <td class="ev-event">${esc(eventType)}</td>
+      <td class="ev-product">${esc(product)}</td>
       <td class="${statusCls}">${status}</td>
       <td class="${httpCls}">${ev.status}</td>
     </tr>`;
@@ -312,4 +317,62 @@ function esc(str) {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
+}
+
+/* ══════════════════════════════════════════════════════════
+   7. REAL WEBHOOK INFO CARD
+   Fetches /api/webhook-info on load and populates the card
+   so users can send genuine webhooks from Postman / curl.
+   ══════════════════════════════════════════════════════════ */
+async function loadWebhookInfo() {
+  try {
+    const r    = await fetch('/api/webhook-info', { cache: 'no-store' });
+    const info = await r.json();
+
+    const prettyBody = JSON.stringify(JSON.parse(info.sampleBody), null, 2);
+    const curlCmd    = [
+      `curl -X POST \\`,
+      `  "${info.endpoint}" \\`,
+      `  -H "Content-Type: application/json" \\`,
+      `  -H "X-Webhook-Signature: <YOUR_SIGNATURE>" \\`,
+      `  -d '${info.sampleBody}'`,
+    ].join('\n');
+
+    const set = (id, text) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    };
+
+    set('rw-endpoint',    info.endpoint);
+    set('rw-secret',      info.secret);
+    set('rw-sample-body', prettyBody);
+    set('rw-curl',        curlCmd);
+  } catch {
+    // silently fail — card will show "Loading…" if server unreachable
+  }
+}
+
+loadWebhookInfo();
+
+/* ── Copy helpers ── */
+function copyRW(elementId) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  copyText(el.textContent.trim());
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    /* brief visual feedback on the active copy button */
+    const active = document.activeElement;
+    if (active && active.classList.contains('rw-copy')) {
+      const orig = active.textContent;
+      active.textContent = 'Copied!';
+      active.style.color = 'var(--green)';
+      setTimeout(() => {
+        active.textContent = orig;
+        active.style.color = '';
+      }, 1500);
+    }
+  }).catch(() => {});
 }
