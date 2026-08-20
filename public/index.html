@@ -8,125 +8,91 @@
 </head>
 <body>
 
-  <!-- ══════════════════════════════════════════════════════
-       HEADER
-  ══════════════════════════════════════════════════════ -->
+  <!-- ── HEADER ── -->
   <header class="site-header">
     <div class="header-brand">
-      <div class="brand-icon" aria-hidden="true">⚡</div>
+      <div class="brand-icon" aria-hidden="true">🛡️</div>
       <div class="brand-text">
-        <div class="brand-title">WEBHOOK GUARD</div>
-        <div class="brand-sub">Northstar Inventory &bull; Webhook Verification</div>
+        <div class="brand-title">Webhook Guard</div>
+        <div class="brand-sub">Northstar Retail · Inventory Protection</div>
       </div>
     </div>
-    <div class="header-status" role="status" aria-live="polite"
-         title="Polled every 8 seconds via GET /api/status">
+    <div class="header-status" id="header-status" role="status" aria-live="polite"
+         title="The app checks the server every 8 seconds to confirm it is running">
       <span class="status-dot" id="status-dot" aria-hidden="true"></span>
-      <span class="status-label" id="status-label">CHECKING…</span>
-      <span class="status-poll-hint">polls /api/status every 8 s</span>
+      <span class="status-label" id="status-label">Checking…</span>
     </div>
   </header>
 
-  <!-- ══════════════════════════════════════════════════════
-       HERO
-  ══════════════════════════════════════════════════════ -->
-  <section class="hero" aria-label="Project overview">
+  <!-- ── HERO ── -->
+  <section class="hero" aria-label="What this app does">
     <div class="hero-inner">
-      <div class="hero-eyebrow">ASSIGNMENT 1 · THE MERIDIAN PIVOT</div>
-      <h1 class="hero-title">Webhook Verification</h1>
+      <div class="hero-eyebrow">Assignment 1 · The Meridian Pivot</div>
+      <h1 class="hero-title">Is this message really from our warehouse?</h1>
       <p class="hero-subtitle">
-        Verify incoming inventory events before they enter the system.
+        When our warehouse system sends an inventory update, we need to be sure it's genuine —
+        not a fake message injected by someone else. This tool lets you test that verification in real time.
       </p>
-      <div class="hero-tags">
-        <div class="hero-endpoint">
-          <span class="method-badge">POST</span>
-          <code>/webhook/inventory</code>
-        </div>
-        <div class="hero-tag">
-          <span class="tag-key">Algorithm</span>
-          <code>HMAC-SHA256</code>
-        </div>
-        <div class="hero-tag">
-          <span class="tag-key">Header</span>
-          <code>X-Webhook-Signature</code>
-        </div>
+      <div class="hero-chips">
+        <span class="hero-chip chip-blue">🔐 Signed with a secret key</span>
+        <span class="hero-chip chip-green">✅ Verified before accepted</span>
+        <span class="hero-chip chip-purple">⚡ Live results, no page refresh</span>
       </div>
-      <p class="hero-desc">
-        Every incoming webhook is authenticated server-side using a
-        <strong>shared secret</strong> and <strong>HMAC-SHA256</strong>.
-        The signature is compared with <strong>timing-safe equality</strong>
-        to prevent side-channel attacks.
-      </p>
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════════════════
-       MAIN GRID  (tester left · status right)
-  ══════════════════════════════════════════════════════ -->
+  <!-- ── MAIN GRID ── -->
   <main class="main-grid" id="main">
 
-    <!-- ── LEFT COLUMN ── -->
+    <!-- LEFT COLUMN -->
     <div class="col-left">
 
-      <!-- TEST WEBHOOK -->
-      <section class="card" id="test-card" aria-label="Test webhook form">
+      <!-- TRY IT NOW -->
+      <section class="card" id="test-card" aria-label="Try the webhook tester">
         <div class="card-header">
-          <span class="card-label">TEST WEBHOOK</span>
-          <span class="card-hint">Fill in the fields and click a button</span>
+          <div class="card-header-icon" aria-hidden="true">🧪</div>
+          <div>
+            <div class="card-title">Try It Now</div>
+            <div class="card-subtitle">Fill in a product and send a message to the warehouse endpoint</div>
+          </div>
         </div>
         <div class="card-body">
 
-          <!-- event is fixed to avoid accidental signature mismatch -->
           <input type="hidden" id="f-event" value="inventory.updated" />
 
           <div class="form-group">
-            <label class="form-label" for="f-pid">
-              Product ID
-              <span class="field-hint">e.g. SKU-001</span>
-            </label>
+            <label class="form-label" for="f-pid">Product ID</label>
             <input class="form-input" id="f-pid" type="text"
                    value="SKU-001" placeholder="e.g. SKU-001" autocomplete="off" />
+            <span class="form-hint">A short code to identify the product (e.g. SKU-001)</span>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="f-pname">
-              Product Name
-              <span class="field-hint">e.g. Laptop</span>
-            </label>
+            <label class="form-label" for="f-pname">Product Name</label>
             <input class="form-input" id="f-pname" type="text"
                    value="Laptop" placeholder="e.g. Laptop" autocomplete="off" />
+            <span class="form-hint">The name of the product being updated</span>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="f-qty">
-              Quantity
-              <span class="field-hint">positive number</span>
-            </label>
+            <label class="form-label" for="f-qty">Quantity</label>
             <input class="form-input" id="f-qty" type="number"
                    value="25" min="0" placeholder="25" />
-          </div>
-
-          <div class="form-info" aria-label="Fixed request details">
-            <span class="form-info-row">
-              <span class="form-info-key">Event</span>
-              <code>inventory.updated</code>
-            </span>
-            <span class="form-info-row">
-              <span class="form-info-key">Endpoint</span>
-              <code>POST /webhook/inventory</code>
-            </span>
+            <span class="form-hint">How many units are in stock</span>
           </div>
 
           <div class="btn-row">
             <button class="btn btn-valid" id="btn-valid"
                     onclick="sendWebhook('valid')"
                     aria-label="Send a correctly signed webhook">
-              ✓&nbsp;&nbsp;Send Valid Webhook
+              <span class="btn-icon">✅</span>
+              Send a <strong>trusted</strong> message
             </button>
             <button class="btn btn-invalid" id="btn-invalid"
                     onclick="sendWebhook('invalid')"
                     aria-label="Send a webhook with a wrong signature">
-              ✕&nbsp;&nbsp;Send Invalid Webhook
+              <span class="btn-icon">🚫</span>
+              Send a <strong>suspicious</strong> message
             </button>
           </div>
 
@@ -134,34 +100,46 @@
         </div>
       </section>
 
-      <!-- VERIFICATION FLOW DIAGRAM -->
-      <section class="card" id="flow-card" aria-label="Verification flow">
+      <!-- HOW VERIFICATION WORKS -->
+      <section class="card" id="flow-card" aria-label="How verification works">
         <div class="card-header">
-          <span class="card-label">VERIFICATION FLOW</span>
+          <div class="card-header-icon" aria-hidden="true">🔍</div>
+          <div>
+            <div class="card-title">How Does Verification Work?</div>
+            <div class="card-subtitle">What happens the moment a message arrives</div>
+          </div>
         </div>
         <div class="card-body flow-body">
-          <div class="flow" role="img" aria-label="Webhook verification decision flow">
-            <div class="flow-node flow-start">Webhook Received</div>
+          <div class="flow" role="img" aria-label="Step-by-step verification flow">
+            <div class="flow-node flow-start">
+              <span class="flow-step-num">1</span>
+              Message Arrives
+            </div>
             <div class="flow-arrow" aria-hidden="true">↓</div>
-            <div class="flow-node">Read Signature</div>
+            <div class="flow-node">
+              <span class="flow-step-num">2</span>
+              Read the Signature
+            </div>
             <div class="flow-arrow" aria-hidden="true">↓</div>
-            <div class="flow-node">Generate Expected HMAC</div>
+            <div class="flow-node">
+              <span class="flow-step-num">3</span>
+              Recalculate Expected Signature
+            </div>
             <div class="flow-arrow" aria-hidden="true">↓</div>
-            <div class="flow-node">Compare Signatures</div>
-            <div class="flow-arrow" aria-hidden="true">↓</div>
-            <div class="flow-node flow-decision">VALID?</div>
+            <div class="flow-node">
+              <span class="flow-step-num">4</span>
+              Do they match?
+            </div>
             <div class="flow-split">
               <div class="flow-branch">
-                <div class="flow-arrow flow-arr-left" aria-hidden="true">↙</div>
-                <div class="flow-label-yes">YES</div>
+                <div class="flow-label-yes">YES ✅</div>
                 <div class="flow-arrow" aria-hidden="true">↓</div>
-                <div class="flow-node flow-accept">200<br/>ACCEPT</div>
+                <div class="flow-node flow-accept">Accepted<br/><small>Message processed</small></div>
               </div>
               <div class="flow-branch">
-                <div class="flow-arrow flow-arr-right" aria-hidden="true">↘</div>
-                <div class="flow-label-no">NO</div>
+                <div class="flow-label-no">NO 🚫</div>
                 <div class="flow-arrow" aria-hidden="true">↓</div>
-                <div class="flow-node flow-reject">401<br/>REJECT</div>
+                <div class="flow-node flow-reject">Rejected<br/><small>Message ignored</small></div>
               </div>
             </div>
           </div>
@@ -169,52 +147,56 @@
       </section>
 
       <!-- TEST SCENARIOS -->
-      <section class="card" id="scenarios-card" aria-label="Test scenarios">
+      <section class="card" id="scenarios-card" aria-label="What each test does">
         <div class="card-header">
-          <span class="card-label">TEST SCENARIOS</span>
+          <div class="card-header-icon" aria-hidden="true">📋</div>
+          <div>
+            <div class="card-title">What Each Button Tests</div>
+            <div class="card-subtitle">Three real scenarios you might encounter</div>
+          </div>
         </div>
         <div class="card-body scenarios-body">
 
           <div class="scenario scenario-ok">
-            <div class="scenario-num">01</div>
+            <div class="scenario-num">1</div>
             <div class="scenario-content">
-              <div class="scenario-title">Valid Signature</div>
-              <div class="scenario-formula">
-                <span class="sf-term sf-ok">Correct payload</span>
-                <span class="sf-op">+</span>
-                <span class="sf-term sf-ok">Correct signature</span>
-                <span class="sf-op">=</span>
-                <span class="sf-result sf-ok">HTTP 200</span>
+              <div class="scenario-title">✅ Trusted Message</div>
+              <div class="scenario-tags">
+                <span class="stag stag-ok">Correct signature</span>
+                <span class="stag-sep">+</span>
+                <span class="stag stag-ok">Real content</span>
+                <span class="stag-sep">=</span>
+                <span class="stag stag-result-ok">Accepted</span>
               </div>
-              <div class="scenario-desc">Server recomputes HMAC using the shared secret and the exact raw bytes received. Digests match — webhook accepted.</div>
+              <div class="scenario-desc">The server confirms the message came from the real warehouse. The signature matches, so the inventory update goes through.</div>
             </div>
           </div>
 
           <div class="scenario scenario-fail">
-            <div class="scenario-num">02</div>
+            <div class="scenario-num">2</div>
             <div class="scenario-content">
-              <div class="scenario-title">Invalid Signature</div>
-              <div class="scenario-formula">
-                <span class="sf-term sf-fail">Incorrect signature</span>
-                <span class="sf-op">=</span>
-                <span class="sf-result sf-fail">HTTP 401</span>
+              <div class="scenario-title">🚫 Wrong Password</div>
+              <div class="scenario-tags">
+                <span class="stag stag-fail">Wrong signature</span>
+                <span class="stag-sep">=</span>
+                <span class="stag stag-result-fail">Rejected</span>
               </div>
-              <div class="scenario-desc">Signed with the wrong secret. HMAC digests differ — webhook rejected immediately.</div>
+              <div class="scenario-desc">The message was signed with a different secret. The server can tell it didn't come from a trusted source and blocks it immediately.</div>
             </div>
           </div>
 
           <div class="scenario scenario-fail">
-            <div class="scenario-num">03</div>
+            <div class="scenario-num">3</div>
             <div class="scenario-content">
-              <div class="scenario-title">Modified Payload</div>
-              <div class="scenario-formula">
-                <span class="sf-term sf-ok">Original signature</span>
-                <span class="sf-op">+</span>
-                <span class="sf-term sf-fail">Modified payload</span>
-                <span class="sf-op">=</span>
-                <span class="sf-result sf-fail">HTTP 401</span>
+              <div class="scenario-title">✏️ Tampered Message</div>
+              <div class="scenario-tags">
+                <span class="stag stag-ok">Real signature</span>
+                <span class="stag-sep">+</span>
+                <span class="stag stag-fail">Modified content</span>
+                <span class="stag-sep">=</span>
+                <span class="stag stag-result-fail">Rejected</span>
               </div>
-              <div class="scenario-desc">Changing one byte in the body produces a completely different HMAC. The original signature no longer matches.</div>
+              <div class="scenario-desc">Someone intercepted the message and changed the quantity. Even one change breaks the signature, so the server knows it was tampered with.</div>
             </div>
           </div>
 
@@ -223,27 +205,31 @@
 
     </div><!-- /col-left -->
 
-    <!-- ── RIGHT COLUMN ── -->
+    <!-- RIGHT COLUMN -->
     <div class="col-right">
 
-      <!-- VERIFICATION STATUS -->
+      <!-- RESULT -->
       <section class="card status-card" id="status-card" aria-label="Verification result">
         <div class="card-header">
-          <span class="card-label">VERIFICATION STATUS</span>
+          <div class="card-header-icon" aria-hidden="true">📬</div>
+          <div>
+            <div class="card-title">Verification Result</div>
+            <div class="card-subtitle">The server's decision will appear here</div>
+          </div>
         </div>
         <div class="card-body status-body" id="status-body">
 
           <!-- idle -->
           <div class="status-idle" id="status-idle">
-            <div class="status-icon-idle" aria-hidden="true">⬡</div>
-            <div class="status-idle-text">Waiting for webhook</div>
-            <div class="status-idle-hint">Send an inventory event to begin verification.</div>
+            <div class="status-icon-idle" aria-hidden="true">📭</div>
+            <div class="status-idle-text">No message sent yet</div>
+            <div class="status-idle-hint">Use the form on the left to send a test inventory update.</div>
           </div>
 
           <!-- loading -->
           <div class="status-loading hidden" id="status-loading" aria-live="assertive">
             <div class="spinner" aria-hidden="true"></div>
-            <div class="status-loading-text">Verifying webhook…</div>
+            <div class="status-loading-text">Verifying your message…</div>
           </div>
 
           <!-- result -->
@@ -256,93 +242,96 @@
 
           <!-- server error -->
           <div class="status-error hidden" id="status-error" role="alert">
-            <div class="error-icon" aria-hidden="true">⚠</div>
-            <div class="error-title">SERVER ERROR</div>
-            <div class="error-desc">Unable to reach the webhook server.</div>
+            <div class="error-icon" aria-hidden="true">⚠️</div>
+            <div class="error-title">Can't reach the server</div>
+            <div class="error-desc">Make sure the server is running and try again.</div>
           </div>
 
         </div>
       </section>
 
-      <!-- EVENT DATA (shown after result) -->
-      <section class="card result-detail-card hidden" id="result-detail-card" aria-label="Event data">
+      <!-- MESSAGE DETAILS (shown after result) -->
+      <section class="card result-detail-card hidden" id="result-detail-card" aria-label="Message details">
         <div class="card-header">
-          <span class="card-label">EVENT DATA</span>
-          <span class="card-hint" id="detail-hint"></span>
+          <div class="card-header-icon" aria-hidden="true">📄</div>
+          <div>
+            <div class="card-title">Message Details</div>
+            <div class="card-subtitle" id="detail-hint"></div>
+          </div>
         </div>
         <div class="card-body">
-          <table class="result-table" id="result-table" aria-label="Verification and event details">
+          <table class="result-table" id="result-table" aria-label="Message and verification details">
           </table>
         </div>
       </section>
 
-      <!-- VERIFICATION DETAILS -->
-      <section class="card" id="method-card" aria-label="Technical verification details">
+      <!-- WHY THIS MATTERS -->
+      <section class="card" id="security-card" aria-label="Why verification matters">
         <div class="card-header">
-          <span class="card-label">VERIFICATION DETAILS</span>
+          <div class="card-header-icon" aria-hidden="true">🔒</div>
+          <div>
+            <div class="card-title">Why Does This Matter?</div>
+            <div class="card-subtitle">Without verification, anyone could fake a stock update</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="security-pair">
+            <div class="security-col security-bad">
+              <div class="security-col-head">❌ Without Verification</div>
+              <div class="security-col-desc">Anyone can send a fake message claiming the quantity of a product changed. The system has no way to tell real from fake.</div>
+              <div class="sec-flow">
+                <div class="sec-node sec-node-bad">Fake Message Sent</div>
+                <div class="sec-arr">↓</div>
+                <div class="sec-node sec-node-bad">No Check Done</div>
+                <div class="sec-arr">↓</div>
+                <div class="sec-node sec-node-bad">Inventory Changed ✗</div>
+              </div>
+            </div>
+            <div class="security-col security-good">
+              <div class="security-col-head">✅ With Verification</div>
+              <div class="security-col-desc">Only messages signed with the correct secret are accepted. Fakes are caught immediately — before any data changes.</div>
+              <div class="sec-flow">
+                <div class="sec-node sec-node-ok">Real Message Sent</div>
+                <div class="sec-arr">↓</div>
+                <div class="sec-node sec-node-ok">Signature Checked</div>
+                <div class="sec-arr">↓</div>
+                <div class="sec-node sec-node-ok">Inventory Updated ✓</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HOW IT STAYS UP TO DATE -->
+      <section class="card" id="method-card" aria-label="Technical details">
+        <div class="card-header">
+          <div class="card-header-icon" aria-hidden="true">⚙️</div>
+          <div>
+            <div class="card-title">How the Verification Works</div>
+            <div class="card-subtitle">Plain-English summary of the technical steps</div>
+          </div>
         </div>
         <div class="card-body">
           <table class="info-table">
             <tbody>
               <tr>
-                <td class="info-key">Algorithm</td>
-                <td class="info-val"><code>HMAC-SHA256</code></td>
+                <td class="info-key">How messages are signed</td>
+                <td class="info-val">A secret key is used to create a unique fingerprint of the message</td>
               </tr>
               <tr>
-                <td class="info-key">Signature Header</td>
-                <td class="info-val"><code>X-Webhook-Signature</code></td>
+                <td class="info-key">How the server checks it</td>
+                <td class="info-val">It recalculates the fingerprint and compares — any difference means rejection</td>
               </tr>
               <tr>
-                <td class="info-key">Authentication</td>
-                <td class="info-val">Shared Secret</td>
+                <td class="info-key">Is the secret safe?</td>
+                <td class="info-val info-val-ok">✅ Never sent to the browser — server only</td>
               </tr>
               <tr>
-                <td class="info-key">Comparison</td>
-                <td class="info-val"><code>crypto.timingSafeEqual()</code></td>
-              </tr>
-              <tr>
-                <td class="info-key">Endpoint</td>
-                <td class="info-val"><code>POST /webhook/inventory</code></td>
-              </tr>
-              <tr>
-                <td class="info-key">Secret Exposed</td>
-                <td class="info-val sec-never">Never — server only</td>
+                <td class="info-key">What prevents guessing?</td>
+                <td class="info-val">Comparison always takes the same time, so hackers can't guess by timing</td>
               </tr>
             </tbody>
           </table>
-        </div>
-      </section>
-
-      <!-- WHY VERIFICATION MATTERS -->
-      <section class="card" id="security-card" aria-label="Why verification matters">
-        <div class="card-header">
-          <span class="card-label">WHY VERIFICATION MATTERS</span>
-        </div>
-        <div class="card-body">
-          <div class="security-pair">
-            <div class="security-col security-bad">
-              <div class="security-col-head">Without Verification</div>
-              <div class="security-col-desc">Anyone can POST to the endpoint and inject fake inventory updates. There is no way to know if the request came from the real warehouse system.</div>
-              <div class="sec-flow">
-                <div class="sec-node sec-node-bad">Forged Webhook</div>
-                <div class="sec-arr">↓</div>
-                <div class="sec-node sec-node-bad">No Check</div>
-                <div class="sec-arr">↓</div>
-                <div class="sec-node sec-node-bad">Accepted ✗</div>
-              </div>
-            </div>
-            <div class="security-col security-good">
-              <div class="security-col-head">With Verification</div>
-              <div class="security-col-desc">Only requests signed with the shared secret pass. A forged or tampered request produces a different HMAC and is rejected before any data is processed.</div>
-              <div class="sec-flow">
-                <div class="sec-node sec-node-ok">Trusted Webhook</div>
-                <div class="sec-arr">↓</div>
-                <div class="sec-node sec-node-ok">Signature Match</div>
-                <div class="sec-arr">↓</div>
-                <div class="sec-node sec-node-ok">Accepted ✓</div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -350,15 +339,16 @@
 
   </main>
 
-  <!-- ══════════════════════════════════════════════════════
-       POLLING vs PUSH — HOW THIS DASHBOARD WORKS
-  ══════════════════════════════════════════════════════ -->
-  <section class="comms-section" aria-label="How real-time updates work">
+  <!-- ── POLLING vs PUSH ── -->
+  <section class="comms-section" aria-label="How the page stays up to date">
     <div class="comms-inner">
 
       <div class="comms-head">
-        <span class="card-label">HOW THIS DASHBOARD RECEIVES UPDATES</span>
-        <span class="comms-sub">Two techniques keep the page in sync with the server</span>
+        <div class="comms-head-icon" aria-hidden="true">📡</div>
+        <div>
+          <div class="comms-title">How Does the Page Stay Up to Date?</div>
+          <div class="comms-sub">Two different ways the browser and server keep in sync</div>
+        </div>
       </div>
 
       <div class="comms-grid">
@@ -367,113 +357,114 @@
         <div class="comms-card comms-poll">
           <div class="comms-card-head">
             <span class="comms-icon" aria-hidden="true">🔄</span>
-            <span class="comms-technique">Polling</span>
-            <span class="comms-badge comms-badge-blue">GET /api/status</span>
+            <div>
+              <div class="comms-technique">Polling</div>
+              <div class="comms-tech-sub">Used for: server status badge</div>
+            </div>
           </div>
           <p class="comms-desc">
-            The browser asks the server <em>"are you still alive?"</em> on a fixed timer.
-            Every <strong>8 seconds</strong> the dashboard fires a
-            <code>GET /api/status</code> request and updates the
-            <strong>SERVER ONLINE / OFFLINE</strong> badge in the header.
+            Think of polling like <strong>repeatedly checking your phone</strong> to see if you have a new message.
+            Every <strong>8 seconds</strong>, this page silently asks the server
+            <em>"Are you still running?"</em> and updates the status badge in the top-right corner.
           </p>
-          <div class="comms-flow">
-            <div class="comms-step comms-step-blue">Browser</div>
-            <div class="comms-arrow">→ every 8 s →</div>
-            <div class="comms-step comms-step-blue">GET /api/status</div>
-            <div class="comms-arrow">←</div>
-            <div class="comms-step comms-step-blue">{ status: "ok" }</div>
+          <div class="comms-visual">
+            <div class="cv-box cv-blue">Your Browser</div>
+            <div class="cv-line">
+              <div class="cv-label-top">asks every 8 s →</div>
+              <div class="cv-arrow-line"></div>
+              <div class="cv-label-bottom">← replies "yes, I'm here"</div>
+            </div>
+            <div class="cv-box cv-blue">Server</div>
           </div>
           <div class="comms-pros-cons">
-            <div class="comms-pro">✓ Simple — just a regular fetch()</div>
-            <div class="comms-con">✗ Fires requests even when nothing changed</div>
-            <div class="comms-con">✗ Adds a delay equal to the poll interval</div>
+            <div class="comms-pro">✅ Simple and reliable</div>
+            <div class="comms-con">⏳ Updates only as often as the timer fires</div>
           </div>
         </div>
 
         <!-- SSE / PUSH -->
         <div class="comms-card comms-sse">
           <div class="comms-card-head">
-            <span class="comms-icon" aria-hidden="true">📡</span>
-            <span class="comms-technique">Server-Sent Events (Push)</span>
-            <span class="comms-badge comms-badge-green">GET /api/events</span>
+            <span class="comms-icon" aria-hidden="true">📨</span>
+            <div>
+              <div class="comms-technique">Live Push (SSE)</div>
+              <div class="comms-tech-sub">Used for: events table below</div>
+            </div>
           </div>
           <p class="comms-desc">
-            The browser opens <strong>one persistent connection</strong> to
-            <code>GET /api/events</code> and leaves it open. The server
-            pushes a new event line whenever a webhook arrives —
-            no repeated requests needed.
-            That is how the <strong>Recent Events</strong> table below
-            updates instantly.
+            Think of this like <strong>leaving a notification on</strong> — you don't keep asking,
+            the server tells you the moment something happens.
+            The events table below updates <strong>instantly</strong> every time a message is verified,
+            without you doing anything.
           </p>
-          <div class="comms-flow">
-            <div class="comms-step comms-step-green">Browser</div>
-            <div class="comms-arrow">— open once →</div>
-            <div class="comms-step comms-step-green">GET /api/events</div>
-            <div class="comms-arrow">← event pushed</div>
-            <div class="comms-step comms-step-green">data: {…}</div>
+          <div class="comms-visual">
+            <div class="cv-box cv-green">Your Browser</div>
+            <div class="cv-line">
+              <div class="cv-label-top">stays connected →</div>
+              <div class="cv-arrow-line cv-arrow-green"></div>
+              <div class="cv-label-bottom">← pushes update instantly</div>
+            </div>
+            <div class="cv-box cv-green">Server</div>
           </div>
           <div class="comms-pros-cons">
-            <div class="comms-pro">✓ Instant — no waiting for the next poll tick</div>
-            <div class="comms-pro">✓ Efficient — only one long-lived connection</div>
-            <div class="comms-con">✗ Slightly more complex server setup</div>
+            <div class="comms-pro">✅ Instant — no delay</div>
+            <div class="comms-pro">✅ Efficient — one open connection</div>
           </div>
         </div>
 
-      </div><!-- /comms-grid -->
+      </div>
 
-      <div class="comms-compare">
-        <div class="comms-compare-row">
-          <span class="cc-label">Technique used for</span>
-          <span class="cc-item cc-blue">Status badge</span>
-          <span class="cc-arrow">→</span>
-          <span class="cc-item cc-blue">Polling (8 s)</span>
+      <div class="comms-summary">
+        <div class="cs-row">
+          <span class="cs-what">🔘 Server status badge</span>
+          <span class="cs-arrow">uses</span>
+          <span class="cs-how cs-how-blue">🔄 Polling — checks every 8 seconds</span>
         </div>
-        <div class="comms-compare-row">
-          <span class="cc-label">Technique used for</span>
-          <span class="cc-item cc-green">Event log table</span>
-          <span class="cc-arrow">→</span>
-          <span class="cc-item cc-green">SSE push</span>
+        <div class="cs-row">
+          <span class="cs-what">📋 Events table</span>
+          <span class="cs-arrow">uses</span>
+          <span class="cs-how cs-how-green">📨 Live push — updates instantly</span>
         </div>
       </div>
 
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════════════════
-       RECENT WEBHOOK EVENTS
-  ══════════════════════════════════════════════════════ -->
+  <!-- ── RECENT EVENTS ── -->
   <section class="events-section" aria-label="Recent webhook events">
     <div class="events-header">
-      <span class="card-label">RECENT WEBHOOK EVENTS</span>
-      <span class="events-hint">
-        <span class="sse-dot" aria-hidden="true"></span>
-        Live push via SSE — no polling
-      </span>
-      <button class="clear-btn" onclick="clearEvents()" aria-label="Clear event history">Clear</button>
+      <div class="events-header-left">
+        <div class="events-title">Recent Messages</div>
+        <div class="events-sub">
+          <span class="sse-dot" aria-hidden="true"></span>
+          Updates instantly — no refresh needed
+        </div>
+      </div>
+      <button class="clear-btn" onclick="clearEvents()" aria-label="Clear event history">
+        Clear history
+      </button>
     </div>
     <div class="events-wrap" role="region" aria-label="Event log">
       <table class="events-table" id="events-table">
         <thead>
           <tr>
-            <th scope="col">TIME</th>
-            <th scope="col">EVENT</th>
-            <th scope="col">PRODUCT</th>
-            <th scope="col">STATUS</th>
-            <th scope="col">HTTP</th>
+            <th scope="col">Time</th>
+            <th scope="col">Event</th>
+            <th scope="col">Product</th>
+            <th scope="col">Result</th>
+            <th scope="col">Code</th>
           </tr>
         </thead>
         <tbody id="events-tbody">
           <tr class="events-empty-row">
-            <td colspan="5">No events yet — send a test webhook above.</td>
+            <td colspan="5">No messages yet — use the form above to send one.</td>
           </tr>
         </tbody>
       </table>
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════════════════
-       ASSIGNMENT INFO
-  ══════════════════════════════════════════════════════ -->
+  <!-- ── ASSIGNMENT INFO ── -->
   <section class="assignment-section" aria-label="Assignment information">
     <div class="assignment-inner">
 
@@ -484,28 +475,28 @@
 
       <div class="assignment-grid">
         <div class="asgn-item">
-          <div class="asgn-key">Unfamiliar Tool</div>
+          <div class="asgn-key">Topic</div>
           <div class="asgn-val">Webhook Verification</div>
         </div>
         <div class="asgn-item">
           <div class="asgn-key">Prototype</div>
-          <div class="asgn-val asgn-ok">Working</div>
+          <div class="asgn-val asgn-ok">✅ Working</div>
         </div>
         <div class="asgn-item">
-          <div class="asgn-key">Verification</div>
-          <div class="asgn-val"><code>HMAC-SHA256</code></div>
+          <div class="asgn-key">Signing Method</div>
+          <div class="asgn-val">HMAC-SHA256</div>
         </div>
         <div class="asgn-item">
-          <div class="asgn-key">Valid Request</div>
-          <div class="asgn-val asgn-ok">HTTP 200</div>
+          <div class="asgn-key">Trusted Message</div>
+          <div class="asgn-val asgn-ok">✅ Accepted (200)</div>
         </div>
         <div class="asgn-item">
-          <div class="asgn-key">Invalid Request</div>
-          <div class="asgn-val asgn-fail">HTTP 401</div>
+          <div class="asgn-key">Suspicious Message</div>
+          <div class="asgn-val asgn-fail">🚫 Rejected (401)</div>
         </div>
         <div class="asgn-item">
-          <div class="asgn-key">Secret Exposed</div>
-          <div class="asgn-val asgn-ok">Never</div>
+          <div class="asgn-key">Secret Key</div>
+          <div class="asgn-val asgn-ok">✅ Server only, never exposed</div>
         </div>
       </div>
 
@@ -514,8 +505,7 @@
         <div class="journal-text">
           <div class="journal-title">Learning &amp; Blocker Journal</div>
           <div class="journal-desc">
-            Documenting errors, dead ends, fixes, and learning during the prototype build.
-            View <code>BLOCKER_JOURNAL.md</code> in the repository.
+            A record of everything learned, every problem hit, and every fix applied while building this prototype.
           </div>
         </div>
         <a class="journal-btn"
