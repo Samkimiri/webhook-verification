@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Webhook Guard — Northstar Inventory</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════ HEADER ═══════════════════════ -->
+  <header class="site-header">
+    <div class="header-brand">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-text">
+        <div class="brand-title">WEBHOOK GUARD</div>
+        <div class="brand-sub">Northstar Inventory &bull; Webhook Verification</div>
+      </div>
+    </div>
+    <div class="header-status">
+      <span class="status-dot" id="status-dot"></span>
+      <span class="status-label" id="status-label">CHECKING…</span>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════ HERO ═════════════════════════ -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">SECURITY MIDDLEWARE</div>
+      <h1 class="hero-title">WEBHOOK VERIFICATION</h1>
+      <p class="hero-subtitle">Secure inventory events before they enter the system.</p>
+      <div class="hero-endpoint">
+        <span class="method-badge">POST</span>
+        <code>/webhook/inventory</code>
+      </div>
+      <p class="hero-desc">
+        Incoming inventory webhooks are authenticated using
+        <strong>HMAC-SHA256</strong> signature verification.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════ MAIN GRID ════════════════════ -->
+  <main class="main-grid">
+
+    <!-- ── LEFT COLUMN ── -->
+    <div class="col-left">
+
+      <!-- TEST WEBHOOK FORM -->
+      <section class="card" id="test-card">
+        <div class="card-header">
+          <span class="card-label">TEST WEBHOOK</span>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label" for="f-event">Event</label>
+            <input class="form-input" id="f-event" type="text" value="inventory.updated" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="f-pid">Product ID</label>
+            <input class="form-input" id="f-pid" type="text" value="SKU-001" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="f-pname">Product Name</label>
+            <input class="form-input" id="f-pname" type="text" value="Laptop" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="f-qty">Quantity</label>
+            <input class="form-input" id="f-qty" type="number" value="25" min="0" />
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-valid" id="btn-valid" onclick="sendWebhook('valid')">
+              Send Valid Webhook
+            </button>
+            <button class="btn btn-invalid" id="btn-invalid" onclick="sendWebhook('invalid')">
+              Send Invalid Webhook
+            </button>
+          </div>
+          <div class="sending-state" id="sending-state"></div>
+        </div>
+      </section>
+
+      <!-- VERIFICATION FLOW -->
+      <section class="card" id="flow-card">
+        <div class="card-header">
+          <span class="card-label">VERIFICATION FLOW</span>
+        </div>
+        <div class="card-body flow-body">
+          <div class="flow">
+            <div class="flow-node flow-start">WEBHOOK</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">SIGNATURE</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">VERIFY</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">VALID?</div>
+            <div class="flow-split">
+              <div class="flow-branch">
+                <div class="flow-arrow">↙</div>
+                <div class="flow-label-yes">YES</div>
+                <div class="flow-arrow">↓</div>
+                <div class="flow-node flow-accept">200<br/>ACCEPT</div>
+              </div>
+              <div class="flow-branch">
+                <div class="flow-arrow">↘</div>
+                <div class="flow-label-no">NO</div>
+                <div class="flow-arrow">↓</div>
+                <div class="flow-node flow-reject">401<br/>REJECT</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VERIFICATION METHOD -->
+      <section class="card" id="method-card">
+        <div class="card-header">
+          <span class="card-label">VERIFICATION METHOD</span>
+        </div>
+        <div class="card-body">
+          <table class="info-table">
+            <tr>
+              <td class="info-key">Algorithm</td>
+              <td class="info-val"><code>HMAC-SHA256</code></td>
+            </tr>
+            <tr>
+              <td class="info-key">Authentication</td>
+              <td class="info-val">Shared Secret</td>
+            </tr>
+            <tr>
+              <td class="info-key">Signature Header</td>
+              <td class="info-val"><code>X-Webhook-Signature</code></td>
+            </tr>
+            <tr>
+              <td class="info-key">Endpoint</td>
+              <td class="info-val"><code>POST /webhook/inventory</code></td>
+            </tr>
+            <tr>
+              <td class="info-key">Comparison</td>
+              <td class="info-val"><code>crypto.timingSafeEqual()</code></td>
+            </tr>
+          </table>
+        </div>
+      </section>
+
+    </div><!-- end col-left -->
+
+    <!-- ── RIGHT COLUMN ── -->
+    <div class="col-right">
+
+      <!-- VERIFICATION STATUS CARD -->
+      <section class="card status-card" id="status-card">
+        <div class="card-header">
+          <span class="card-label">VERIFICATION STATUS</span>
+        </div>
+        <div class="card-body status-body" id="status-body">
+          <!-- initial state -->
+          <div class="status-idle" id="status-idle">
+            <div class="status-icon-idle">⬡</div>
+            <div class="status-idle-text">Waiting for webhook…</div>
+            <div class="status-idle-hint">Use the form to send a test request.</div>
+          </div>
+          <!-- loading state -->
+          <div class="status-loading hidden" id="status-loading">
+            <div class="spinner"></div>
+            <div class="status-loading-text">Verifying webhook…</div>
+          </div>
+          <!-- result state -->
+          <div class="status-result hidden" id="status-result">
+            <div class="result-icon" id="result-icon"></div>
+            <div class="result-verdict" id="result-verdict"></div>
+            <div class="result-lines" id="result-lines"></div>
+            <div class="result-http" id="result-http"></div>
+          </div>
+          <!-- error state -->
+          <div class="status-error hidden" id="status-error">
+            <div class="error-icon">⚠</div>
+            <div class="error-title">SERVER ERROR</div>
+            <div class="error-desc">Unable to reach webhook server.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VERIFICATION RESULT DETAILS -->
+      <section class="card result-detail-card hidden" id="result-detail-card">
+        <div class="card-header">
+          <span class="card-label">VERIFICATION RESULT</span>
+        </div>
+        <div class="card-body">
+          <table class="result-table" id="result-table">
+            <!-- rows injected by JS -->
+          </table>
+        </div>
+      </section>
+
+    </div><!-- end col-right -->
+
+  </main><!-- end main-grid -->
+
+  <!-- ═══════════════════════ EVENT TABLE ══════════════════ -->
+  <section class="events-section">
+    <div class="events-header">
+      <span class="card-label">RECENT WEBHOOK EVENTS</span>
+      <button class="clear-btn" onclick="clearEvents()">Clear</button>
+    </div>
+    <div class="events-wrap">
+      <table class="events-table" id="events-table">
+        <thead>
+          <tr>
+            <th>TIME</th>
+            <th>PRODUCT</th>
+            <th>EVENT</th>
+            <th>STATUS</th>
+            <th>HTTP</th>
+          </tr>
+        </thead>
+        <tbody id="events-tbody">
+          <tr class="events-empty-row" id="events-empty">
+            <td colspan="5">No events yet — send a test webhook above.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
