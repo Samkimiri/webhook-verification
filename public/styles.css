@@ -183,7 +183,7 @@ body {
 @media (max-width: 900px)  { .main-grid { grid-template-columns: 1fr; } }
 @media (max-width: 600px)  { .main-grid { padding: 16px; } .hero { padding: 32px 16px; } .site-header { padding: 0 16px; } }
 
-.col-left, .col-right { display: flex; flex-direction: column; gap: 20px; }
+.col-left, .col-right { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
 
 /* ════════════════════════════════════════════════════════════
    CARDS
@@ -1024,4 +1024,8 @@ body {
   .brand-sub { display: none; }
   .comms-visual { flex-direction: column; gap: 8px; }
   .cv-line { width: 100%; padding: 4px 0; }
+  .flow-split { flex-direction: column; gap: 10px; }
+  .card-body  { padding: 16px; }
+  .card-header { padding: 14px 16px; }
+  .rw-label { min-width: 0; width: 100%; }
 }
