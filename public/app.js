@@ -18,6 +18,43 @@
 let sessionEvents = [];   // newest first
 
 /* ══════════════════════════════════════════════════════════
+   0. THEME TOGGLE — light/dark, persisted per browser
+   ══════════════════════════════════════════════════════════ */
+function getStoredTheme() {
+  try { return localStorage.getItem('wg-theme'); } catch { return null; }
+}
+function setStoredTheme(theme) {
+  try { localStorage.setItem('wg-theme', theme); } catch {}
+}
+function systemPrefersDark() {
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+function currentTheme() {
+  const stored = getStoredTheme();
+  return (stored === 'light' || stored === 'dark') ? stored : (systemPrefersDark() ? 'dark' : 'light');
+}
+function syncThemeIcon() {
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.textContent = currentTheme() === 'dark' ? '☀️' : '🌙';
+}
+function initTheme() {
+  syncThemeIcon();
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  mq.addEventListener('change', () => { if (!getStoredTheme()) syncThemeIcon(); });
+
+  const btn = document.getElementById('theme-toggle');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      const next = currentTheme() === 'dark' ? 'light' : 'dark';
+      setStoredTheme(next);
+      document.documentElement.setAttribute('data-theme', next);
+      syncThemeIcon();
+    });
+  }
+}
+initTheme();
+
+/* ══════════════════════════════════════════════════════════
    1. SERVER STATUS — polls /api/status every 8 s
    ══════════════════════════════════════════════════════════ */
 async function checkServerStatus() {
